@@ -1,0 +1,2 @@
+numpy==1.24.2
+transform3d==0.0.4
