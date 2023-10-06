@@ -4,6 +4,7 @@ import numpy as np
 
 # created function to combine rotation matrix with position vector 
 # to get 4x4 fram transformation matrix
+
 def create_frame_transformation_matrix(rotation_matrix, position_vector):
     frame_transformation_matrix = np.empty((4, 4), dtype=object)
     rows, columns = rotation_matrix.shape
@@ -29,7 +30,12 @@ def create_frame_transformation_matrix(rotation_matrix, position_vector):
 
     return frame_transformation_matrix
 
+
 # function to perform frame transformation on a point vector
+# parameters:   frame_transformation matrix -> 4x4 matrix
+#               position vector: vector that the frame transformation will occur on 
+# return        new transposed vector position 
+ 
 def transform_vector(frame_transformation_matrix, position_vector):
 
     rows, columns = frame_transformation_matrix.shape
