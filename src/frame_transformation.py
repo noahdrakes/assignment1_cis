@@ -15,8 +15,8 @@ def create_frame_transformation_matrix(rotation_matrix, position_vector):
     frame_transformation_matrix[0][3] = position_vector[0] #set the x of position vector
     frame_transformation_matrix[1][3] = position_vector[1] #set the y of position vector
     frame_transformation_matrix[2][3] = position_vector[2] #set the z of position vector
+    
     frame_transformation_matrix[3][3] = 1
-
     frame_transformation_matrix[3][0] = 0
     frame_transformation_matrix[3][1] = 0
     frame_transformation_matrix[3][2] = 0
