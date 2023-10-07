@@ -60,22 +60,31 @@ def calculate_rotation_transformation(matA, matB):
 
     # STEP 2: CALCULATE H
 
-    H = np.zeros((3,3), dtype="float64")
-    new_Matrix = np.zeros((3,3), dtype="float64")
+    H = np.zeros((3,3))
+    new_Matrix = np.zeros((3,3))
 
     rows, columns = a_tilda.shape
-    for k in range(0, rows):
-        for i in range(0, 3):
-            for j in range(0,3):
-                new_Matrix[i][j] = a_tilda[k][i] * b_tilda[k][j]
-        H += new_Matrix
+    # for k in range(0, rows):
+    #     for i in range(0, 3):
+    #         for j in range(0,3):
+    #             new_Matrix[i][j] = a_tilda[k][i] * b_tilda[k][j]
+    #     H += new_Matrix
 
-    
+    for _a, _b in list(zip(a_tilda, b_tilda)): 
+        H_temp = np.array([[_a[0]*_b[0], _a[0]*_b[1], _a[0]*_b[2]], 
+                            [_a[1]*_b[0], _a[1]*_b[1], _a[1]*_b[2]], 
+                            [_a[2]*_b[0], _a[2]*_b[1], _a[2]*_b[2]]])
+
+  
+    H = H_temp
     # STEP 3: COMPUTE SVD
     U, S, VT = np.linalg.svd(H)
 
     # STEP 4: COMPUTE R
     R = np.dot(VT.T,  U.T)
+
+    # if np.linalg.det(R) < 0:
+    #     VT[-1,:] *= -1
 
     # STEP 5: Validate Determinant
     determinant = np.linalg.det(R)
@@ -89,15 +98,18 @@ def calculate_rotation_transformation(matA, matB):
 
 
 
-def calculate_translation_transformation(matA, matB):
+def calculate_translation_transformation(matA, matB, R):
     a_bar = calculate_mean(matA)
     b_bar = calculate_mean(matB)
+    return b_bar - np.dot(R, a_bar)
 
 
 
 
 def calculate_point_cloud_registration_svd(matA, matB):
     R = calculate_rotation_transformation(matA, matB)
+    p = calculate_translation_transformation(matA, matB, R)
+    return R, p
 
 
 
