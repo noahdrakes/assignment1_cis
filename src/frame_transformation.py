@@ -88,7 +88,49 @@ def calculate_point_cloud_registration(matA, matB):
     print("deltaT:")
     print(delta.transpose())
 
+    print("test array:")
+    x = np.array([1, 2 , 3])
+    print(x)
+
+    print(x.transpose())
+
     
 
 
+def calculate_point_cloud_registration_svd(matA, matB):
+
+    # STEP 1: CALCULATE H
+
+    H = np.zeros((3,3), dtype="float64")
+    new_Matrix = np.zeros((3,3), dtype="float64")
+
+    rows, columns = matA.shape
+    for k in range(0, rows):
+        for i in range(0, 3):
+            for j in range(0,3):
+                new_Matrix[i][j] = matA[k][i] * matB[k][j]
+        H += new_Matrix
+
+    
+    # STEP 2: COMPUTE SVD
+    U, S, VT = np.linalg.svd(H)
+
+    # STEP 3: COMPUTE R
+    R = np.dot(VT.T,  U.T)
+
+    # STEP 4: Validate Determinant
+    determinant = np.linalg.det(R)
+
+    if determinant <= 1.000001 and determinant > 0.9999:
+        return R
+    else:
+        return None
+
+    
+
+
+    
+    
+
+    
 

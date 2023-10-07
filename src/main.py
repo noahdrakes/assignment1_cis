@@ -1,7 +1,7 @@
 import numpy as np
 from transforms3d import euler as e
 from transforms3d import quaternions as q
-import frame_transformation as fp
+import frame_transformation as ft
 import random
 # from transforms3d.derivations import eulerangles
 
@@ -28,7 +28,7 @@ pos_vector = 10, -5, 4
 
 # creating frame transformation matrix
 ft_matrix = np.empty((4,4), dtype=object)
-ft_matrix = fp.create_frame_transformation_matrix(rotation_matrix, pos_vector)
+ft_matrix = ft.create_frame_transformation_matrix(rotation_matrix, pos_vector)
 print("frame transformation matrix:") 
 print(ft_matrix)
 
@@ -36,7 +36,7 @@ print(ft_matrix)
 transposed_pos_vector = np.array([6, -4, 1, 1])
 
 # obtaining transposed point
-transformed_vector = fp.transform_vector(ft_matrix, transposed_pos_vector)
+transformed_vector = ft.transform_vector(ft_matrix, transposed_pos_vector)
 print(transformed_vector)
 
 
@@ -65,7 +65,8 @@ for i in range(0,3):
         A[i][j] = random.randrange(10)
         B[i][j] = random.randrange(10)
 
-fp.calculate_point_cloud_registration(A, B)
+ft.calculate_point_cloud_registration(A, B)
+ft.calculate_point_cloud_registration_svd(A,B)
 
 
 
