@@ -49,88 +49,72 @@ def transform_vector(frame_transformation_matrix, position_vector):
     return frame_transformation_matrix.dot(position_vector)
 
     
-# Algorithim 3D point set to 3D point set registration algorithm
-
-# using the quaternion method 
-# REFERENCE: SLIDE 25: https://ciis.lcsr.jhu.edu/lib/exe/fetch.php?media=courses:455-655:lectures:rigid3d3dcalculations.pdf
-
-# parameters 
-# matA is a matrix that contains the initial x y z positions 
-# 
-# Eg: matA[0][0] = x0 , matA[0][1] = y0, matA[1][0] x1, matA[1][2] = z2 and so on 
-#
-# matB is a matrix that contains the transposed coordinates 
-
-def calculate_point_cloud_registration(matA, matB):
-
-    # STEP 1: CALCULATE H
-
-    H = np.zeros((3,3), dtype=object)
-    new_Matrix = np.zeros((3,3), dtype=object)
-
-    rows, columns = matA.shape
-    for k in range(0, rows):
-        for i in range(0, 3):
-            for j in range(0,3):
-                new_Matrix[i][j] = matA[k][i] * matB[k][j]
-        H += new_Matrix
-
-    
-    # STEP 2: CALCULATE G
-    G = np.zeros((4,4), dtype=object)
-
-    traceH = H.trace()
-    print(traceH)
-
-    deltaT = np.array([H[1][2]-H[2,1] , H[2][0] - H[0][2] , H[0][1] - H[1][0] ])
-    delta = deltaT.transpose()
-
-    print("deltaT:")
-    print(delta.transpose())
-
-    print("test array:")
-    x = np.array([1, 2 , 3])
-    print(x)
-
-    print(x.transpose())
-
-    
 
 
-def calculate_point_cloud_registration_svd(matA, matB):
+def calculate_rotation_transformation(matA, matB):
+    # STEP 1: CALCULATE STD DEVIATION OF mat A and B and the sigma
 
-    # STEP 1: CALCULATE H
+    a_tilda = calculate_stddeviation(matA)
+    b_tilda = calculate_stddeviation(matB)
+    sigma = calculate_sigma(matA, matB)
+
+    # STEP 2: CALCULATE H
 
     H = np.zeros((3,3), dtype="float64")
     new_Matrix = np.zeros((3,3), dtype="float64")
 
-    rows, columns = matA.shape
+    rows, columns = a_tilda.shape
     for k in range(0, rows):
         for i in range(0, 3):
             for j in range(0,3):
-                new_Matrix[i][j] = matA[k][i] * matB[k][j]
+                new_Matrix[i][j] = a_tilda[k][i] * b_tilda[k][j]
         H += new_Matrix
 
     
-    # STEP 2: COMPUTE SVD
+    # STEP 3: COMPUTE SVD
     U, S, VT = np.linalg.svd(H)
 
-    # STEP 3: COMPUTE R
+    # STEP 4: COMPUTE R
     R = np.dot(VT.T,  U.T)
 
-    # STEP 4: Validate Determinant
+    # STEP 5: Validate Determinant
     determinant = np.linalg.det(R)
 
-    if determinant <= 1.000001 and determinant > 0.9999:
-        return R
-    else:
-        return None
+    # if determinant <= 1.000001 and determinant > 0.9999:
+    #     return R
+    # else: 
+    #     return None
+
+    return R
+
+
+
+def calculate_translation_transformation(matA, matB):
+    a_bar = calculate_mean(matA)
+    b_bar = calculate_mean(matB)
+
+
+
+
+def calculate_point_cloud_registration_svd(matA, matB):
+    R = calculate_rotation_transformation(matA, matB)
+
+
 
     
 
 
-    
-    
 
-    
+#### MATH METHODS #####
 
+def calculate_mean(matrix):
+    return np.mean(matrix,axis = 0)
+
+def calculate_stddeviation(matrix):
+    return matrix - calculate_mean(matrix)
+
+def calculate_sigma(matA, matB):
+    a_tilda = calculate_stddeviation(matA)
+    b_tilda = calculate_stddeviation(matB)
+
+    return (np.linalg.norm(b_tilda, axis=0))/(np.linalg.norm(a_tilda, axis=0))

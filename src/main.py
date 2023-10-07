@@ -15,12 +15,12 @@ z_rotation = np.deg2rad(30)
 # converting angles into rotation matrices
 rotation_matrix = e.euler2mat( z_rotation ,x_rotation, y_rotation, 'szxy')
 print("rotation matrix:")
-print(rotation_matrix)
+# print(rotation_matrix)
 
 # converting rotation matrix to quaternion
 quaternion_matrix = q.mat2quat(rotation_matrix)
 print("quaternion matrix")
-print(quaternion_matrix)
+# print(quaternion_matrix)
 
 #creating position vector
 pos_vector = np.empty((3,0), dtype=object)
@@ -30,14 +30,14 @@ pos_vector = 10, -5, 4
 ft_matrix = np.empty((4,4), dtype=object)
 ft_matrix = ft.create_frame_transformation_matrix(rotation_matrix, pos_vector)
 print("frame transformation matrix:") 
-print(ft_matrix)
+# print(ft_matrix)
 
 # creating new vector for point transformation
 transposed_pos_vector = np.array([6, -4, 1, 1])
 
 # obtaining transposed point
 transformed_vector = ft.transform_vector(ft_matrix, transposed_pos_vector)
-print(transformed_vector)
+# print(transformed_vector)
 
 
 
@@ -59,15 +59,25 @@ print(transformed_vector)
 ###########################################################################
 
 #TEST HERE#
-A, B = np.empty((3,3), dtype=object), np.empty((3,3), dtype=object)
+A, B = np.empty((3,3), dtype="float"), np.empty((3,3), dtype="float")
 for i in range(0,3):
     for j in range(0,3):
-        A[i][j] = random.randrange(10)
-        B[i][j] = random.randrange(10)
+        A[i][j] = random.uniform(1.5, 10.2)
+        B[i][j] = random.uniform(1.5, 10.2)
 
-ft.calculate_point_cloud_registration(A, B)
+
+# ft.calculate_point_cloud_registration(A, B)
 ft.calculate_point_cloud_registration_svd(A,B)
 
+
+print("MEAN: ")
+print(ft.calculate_mean(A))
+
+print("STD: ")
+print(ft.calculate_stddeviation(A))
+
+print("DETERMINANT")
+print(np.linalg.det(ft.calculate_rotation_transformation(A,B)))
 
 
 
